@@ -3,16 +3,22 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-7">
-        <div class="card shadow">
-            <div class="card-header bg-warning text-dark text-center">
-                <h4 class="card-title mb-0"><i class="fas fa-edit me-2"></i>Update Ticket</h4>
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-gradient-warning text-dark text-center py-3">
+                <h4 class="card-title mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Update Ticket #{{ ticket.id }}</h4>
             </div>
             <div class="card-body p-4">
-                <div class="mb-4 p-3 border rounded bg-light">
-                    <h5 class="card-title text-primary">{{ ticket.title }}</h5>
-                    <p class="card-text">{{ ticket.description }}</p>
-                    <div class="d-flex justify-content-between mt-3">
+                <!-- Ticket Preview Card -->
+                <div class="mb-4 p-4 border-start border-4 border-primary rounded bg-light-subtle">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title text-primary mb-0">{{ ticket.title }}</h5>
+                        <span class="badge {% if ticket.status == 'open' %}bg-success{% elif ticket.status == 'in_progress' %}bg-warning{% else %}bg-info{% endif %}">
+                            {{ ticket.status|title }}
+                        </span>
+                    </div>
+                    <p class="card-text text-muted">{{ ticket.description }}</p>
+                    <div class="d-flex justify-content-between mt-3 pt-2 border-top">
                         <small class="text-muted">
                             <i class="far fa-user me-1"></i>Submitted by: {{ ticket.user.username }}
                         </small>
@@ -22,49 +28,69 @@
                     </div>
                 </div>
                 
+                <!-- Update Form -->
                 <form method="post">
                     {% csrf_token %}
                     
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md">
                             <div class="mb-3">
-                                <label for="status" class="form-label fw-bold">Status</label>
-                                <select name="status" id="status" class="form-select">
+                                <label for="status" class="form-label fw-semibold">Status <span class="text-danger">*</span></label>
+                                <select name="status" id="status" class="form-select shadow-sm">
                                     <option value="open" {% if ticket.status == "open" %}selected{% endif %}>Open</option>
                                     <option value="in_progress" {% if ticket.status == "in_progress" %}selected{% endif %}>In Progress</option>
                                     <option value="resolved" {% if ticket.status == "resolved" %}selected{% endif %}>Resolved</option>
                                 </select>
+                                <div class="form-text">Current status: <span class="fw-semibold">{{ ticket.status|title }}</span></div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="response" class="form-label fw-bold">Admin Response</label>
-                                <textarea name="response" id="response" class="form-control" rows="5" 
-                                          placeholder="Enter your response to the user here...">{% if ticket.response %}{{ ticket.response }}{% endif %}</textarea>
-                                <div class="form-text">This response will be visible to the user.</div>
+                                <label for="priority" class="form-label fw-semibold">Priority</label>
+                                <select name="priority" id="priority" class="form-select shadow-sm">
+                                    <option value="low" {% if ticket.priority == "low" %}selected{% endif %}>Low</option>
+                                    <option value="medium" {% if ticket.priority == "medium" %}selected{% endif %}>Medium</option>
+                                    <option value="high" {% if ticket.priority == "high" %}selected{% endif %}>High</option>
+                                    <option value="urgent" {% if ticket.priority == "urgent" %}selected{% endif %}>Urgent</option>
+                                </select>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'home' %}" class="btn btn-secondary">
+                    <div class="mb-4">
+                        <label for="response" class="form-label fw-semibold">Admin Response <span class="text-danger">*</span></label>
+                        <textarea name="response" id="response" class="form-control shadow-sm" rows="6" 
+                                  placeholder="Enter your detailed response to the user here...">{% if ticket.response %}{{ ticket.response }}{% endif %}</textarea>
+                        <div class="form-text">This response will be visible to the user and emailed to them.</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4 pt-2">
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                         </a>
                         <div>
                             <button type="reset" class="btn btn-outline-secondary me-2">
-                                <i class="fas fa-undo me-2"></i>Reset
+                                <i class="fas fa-redo me-2"></i>Reset
                             </button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary gradient-btn">
                                 <i class="fas fa-save me-2"></i>Update Ticket
                             </button>
                         </div>
                     </div>
                 </form>
                 
+                <!-- Current Response Section -->
                 {% if ticket.response %}
-                <div class="mt-4 p-3 border rounded bg-light">
-                    <h6 class="fw-bold text-primary">Current Response:</h6>
-                    <p class="mb-0">{{ ticket.response }}</p>
+                <div class="mt-5 pt-3 border-top">
+                    <h6 class="fw-bold text-primary mb-3"><i class="fas fa-comment-dots me-2"></i>Current Response</h6>
+                    <div class="p-3 border rounded bg-light">
+                        <p class="mb-0">{{ ticket.response }}</p>
+                        {% if ticket.updated_at %}
+                        <div class="text-end mt-2">
+                            <small class="text-muted">Last updated: {{ ticket.updated_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endif %}
             </div>
@@ -75,20 +101,44 @@
 <style>
     .card {
         border: none;
-        border-radius: 10px;
+        border-radius: 12px;
     }
     
     .card-header {
-        border-radius: 10px 10px 0 0 !important;
+        border-radius: 12px 12px 0 0 !important;
+    }
+    
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #ffce3a 100%);
     }
     
     textarea.form-control {
-        min-height: 120px;
+        min-height: 150px;
         resize: vertical;
     }
     
-    .bg-light {
+    .bg-light-subtle {
         background-color: #f8f9fa !important;
+    }
+    
+    .gradient-btn {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .gradient-btn:hover {
+        background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .shadow-sm {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+    
+    .border-primary {
+        border-color: #0d6efd !important;
     }
 </style>
 {% endblock %}
