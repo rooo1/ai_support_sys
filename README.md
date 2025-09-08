@@ -23,7 +23,7 @@ It integrates with **Google Gemini API** to auto-generate helpful responses for 
 ## 🛠️ Setup & Installation
 
 ### 1. Clone the repository
-git clone https://github.com/your-username/django-ticket-system.git
+git clone https://github.com/rooo1/ai_support_sys.git
 cd django-ticket-system
 
 ### 2. Create a virtual environment
