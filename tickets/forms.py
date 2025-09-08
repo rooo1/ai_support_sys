@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ["title", "description"]
+        fields = ["title", "description", "category"]
 
 class LoginForm(AuthenticationForm):
     pass

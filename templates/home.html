@@ -16,12 +16,14 @@
         <div class="card ticket-card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-bold text-truncate">{{ ticket.title }}</span>
+
                 <span class="badge 
                     {% if ticket.status == 'open' %}bg-info
                     {% elif ticket.status == 'in_progress' %}bg-warning
                     {% else %}bg-success{% endif %} status-badge">
                     {{ ticket.status|title }}
                 </span>
+
             </div>
             <div class="card-body">
                 <p class="card-text">{{ ticket.description|truncatewords:50 }}</p>
@@ -40,6 +42,9 @@
                 <small class="text-muted d-block mt-2">
                     <i class="far fa-clock me-1"></i>Created: {{ ticket.created_at|date:"M d, Y H:i" }}
                 </small>
+                    <span class="badge bg-light text-dark status-badge">
+                        {{ ticket.category|title }}
+                    </span>
             </div>
             <div class="card-footer bg-transparent">
                 <div class="d-flex justify-content-between">

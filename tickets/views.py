@@ -35,9 +35,9 @@ def create_ticket(request):
         if form.is_valid():
             ticket = form.save(commit=False)
             ticket.user = request.user
-            # generate AI response
-            ai_response = generate_ticket_reply(ticket.title, ticket.description)
-            ticket.response = ai_response
+            #  generate AI response
+            # ai_response = generate_ticket_reply(ticket.title, ticket.description)
+            # ticket.response = ai_response
             ticket.save()
             return redirect("home")
     else:
