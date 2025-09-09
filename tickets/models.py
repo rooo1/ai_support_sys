@@ -12,6 +12,7 @@ class Ticket(models.Model):
         ('billing', 'Billing'),
         ('technical', 'Technical'),
         ('general', 'General Inquiry'),
+        
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tickets")

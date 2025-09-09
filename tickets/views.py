@@ -24,7 +24,7 @@ def logout_view(request):
 @login_required
 def home(request):
     tickets = Ticket.objects.filter(user=request.user)
-    if request.user.is_staff:  # admin can see all
+    if request.user.is_staff:  
         tickets = Ticket.objects.all()
     return render(request, "home.html", {"tickets": tickets})
 
@@ -35,9 +35,9 @@ def create_ticket(request):
         if form.is_valid():
             ticket = form.save(commit=False)
             ticket.user = request.user
-            #  generate AI response
-            # ai_response = generate_ticket_reply(ticket.title, ticket.description)
-            # ticket.response = ai_response
+            # #  generate AI response
+            # # ai_response = generate_ticket_reply(ticket.title, ticket.description)
+            # # ticket.response = ai_response
             ticket.save()
             return redirect("home")
     else:
@@ -56,10 +56,10 @@ def update_ticket_status(request, ticket_id):
             ticket.save()
             return redirect("home")
         else:
-            # auto-suggest Gemini reply if ticket has no response
             if not ticket.response:
-                from .gemini_helper import generate_ticket_reply
                 ticket.response = generate_ticket_reply(ticket.title, ticket.description)
         return render(request, "update_ticket.html", {"ticket": ticket})
     return redirect("home")
 
+def hello_world():
+    return "{hello world}"
